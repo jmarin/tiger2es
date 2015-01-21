@@ -9,7 +9,6 @@ import (
 const FTP_URL = "ftp2.census.gov"
 
 func downloadAddrFeat(fips string) {
-	fmt.Println("Downloading state: " + fips)
 
 	ftpClient := ftp4go.NewFTP(0)
 
@@ -19,7 +18,7 @@ func downloadAddrFeat(fips string) {
 		os.Exit(-1)
 	}
 
-	//defer ftpClient.Quit()
+	defer ftpClient.Quit()
 
 	_, loginerr := ftpClient.Login("anonymous", "", "")
 	if loginerr != nil {
@@ -27,13 +26,23 @@ func downloadAddrFeat(fips string) {
 		os.Exit(-1)
 	}
 
-	pwd, err := ftpClient.Pwd()
-	if err != nil {
-		fmt.Println("The Pwd command failed")
+	_, cwderror := ftpClient.Cwd("/geo/tiger/TIGER2014/ADDRFEAT")
+	if cwderror != nil {
+		fmt.Println("ERROR: Could not change to directory")
 		os.Exit(-1)
 	}
 
-	fmt.Println("The current folder is", pwd)
+	zipList, listError := ftpClient.Nlst()
+	if listError != nil {
+		fmt.Println("ERROR: Could not list directory contents", listError)
+		os.Exit(-1)
+	}
 
-	ftpClient.Quit()
+	for _, zipElem := range zipList {
+		if fips == zipElem[8:10] {
+			fmt.Println("Downloading", zipElem)
+			ftpClient.DownloadFile(zipElem, zipElem, false)
+		}
+	}
+
 }
