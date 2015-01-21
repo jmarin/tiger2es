@@ -9,14 +9,13 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "tiger2es"
-	//app.Usage = "tiger2es <state> <host> <port>"
 	app.Author = "Juan Marin Otero"
 	app.Email = "juan.marin.otero@gmail.com"
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "state, s",
-			Value: "all",
+			Name: "state, s",
+			//Value: "all",
 			Usage: "state to process (FIPS code)",
 		},
 		cli.StringFlag{
@@ -34,7 +33,11 @@ func main() {
 		state := c.String("state")
 		host := c.String("host")
 		port := c.String("port")
-		fmt.Println("Loading state: " + state + " into " + host + ":" + port)
+		if state != "" {
+			fmt.Println("Loading state: " + state + " into " + host + ":" + port)
+		} else {
+			fmt.Println("Please provide a state to process")
+		}
 	}
 
 	app.Run(os.Args)
