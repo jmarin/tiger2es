@@ -35,7 +35,7 @@ func main() {
 		port := c.String("port")
 		if state != "" {
 			fmt.Println("Loading state: " + state + " into " + host + ":" + port)
-			downloadAddrFeat(state)
+			DownloadAddrFeat(state)
 		} else {
 			fmt.Println("Please provide a state to process")
 		}

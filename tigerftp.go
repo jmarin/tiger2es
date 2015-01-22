@@ -2,46 +2,47 @@ package main
 
 import (
 	"code.google.com/p/ftp4go"
-	"fmt"
+	"log"
 	"os"
 )
 
 const FTP_URL = "ftp2.census.gov"
 
-func downloadAddrFeat(fips string) {
+func DownloadAddrFeat(fips string) {
 
 	ftpClient := ftp4go.NewFTP(0)
 
 	_, err := ftpClient.Connect(FTP_URL, ftp4go.DefaultFtpPort, "")
 	if err != nil {
-		fmt.Println("ERROR: Could not connect to FTP server")
+		log.Fatal(err)
 		os.Exit(-1)
 	}
 
 	defer ftpClient.Quit()
 
-	_, loginerr := ftpClient.Login("anonymous", "", "")
-	if loginerr != nil {
-		fmt.Println("ERROR: Could not connect to FTP server")
+	_, loginErr := ftpClient.Login("anonymous", "", "")
+	if loginErr != nil {
+		log.Fatal(loginErr)
 		os.Exit(-1)
 	}
 
-	_, cwderror := ftpClient.Cwd("/geo/tiger/TIGER2014/ADDRFEAT")
-	if cwderror != nil {
-		fmt.Println("ERROR: Could not change to directory")
+	_, cwdError := ftpClient.Cwd("/geo/tiger/TIGER2014/ADDRFEAT")
+	if cwdError != nil {
+		log.Fatal(cwdError)
 		os.Exit(-1)
 	}
 
 	zipList, listError := ftpClient.Nlst()
 	if listError != nil {
-		fmt.Println("ERROR: Could not list directory contents", listError)
+		log.Fatal(listError)
 		os.Exit(-1)
 	}
 
-	for _, zipElem := range zipList {
-		if fips == zipElem[8:10] {
-			fmt.Println("Downloading", zipElem)
-			ftpClient.DownloadFile(zipElem, zipElem, false)
+	for _, zipFile := range zipList {
+		if fips == zipFile[8:10] {
+			log.Print("Downloading ", zipFile)
+			ftpClient.DownloadFile(zipFile, zipFile, false)
+			UnzipFile(zipFile)
 		}
 	}
 
