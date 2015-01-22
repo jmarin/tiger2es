@@ -2,13 +2,12 @@ package main
 
 import (
 	"archive/zip"
-	"fmt"
+	shp "github.com/jonas-p/go-shp"
+	geojson "github.com/kpawlik/geojson"
 	"io"
 	"log"
 	"os"
-	"reflect"
-
-	"github.com/jonas-p/go-shp"
+	//"reflect"
 )
 
 func UnzipFile(zipFile string) {
@@ -39,29 +38,36 @@ func UnzipFile(zipFile string) {
 	}
 }
 
-// Pass .shp file name
-func readShapefile(file string) {
-	shape, err := shp.Open(file)
+func ReadShapefile(filename string) {
+	getLines(filename)
+
+}
+
+func getLines(filename string) {
+	values := make(map[string]interface{})
+	file, err := shp.Open(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer shape.Close()
+	defer file.Close()
 
-	//fields
-	fields := shape.Fields()
+	for file.Next() {
+		_, shape := file.Shape()
+		line := shape.(*shp.PolyLine)
+		geometry := getLineString(line)
+		feature := geojson.NewFeature(geometry, values, nil)
+		log.Print(geojson.Marshal(feature))
 
-	//loop through all features in the shapefile
-	for shape.Next() {
-		n, p := shape.Shape()
-
-		fmt.Println(reflect.TypeOf(p).Elem(), p.BBox())
-
-		//print attributes
-		for k, f := range fields {
-			val := shape.ReadAttribute(n, k)
-			fmt.Printf("\t%v: %v\n", f, val)
-		}
-
-		fmt.Println()
 	}
+}
+
+func getLineString(line *shp.PolyLine) *geojson.LineString {
+	points := line.Points
+	coordinates := geojson.Coordinates{}
+	for _, point := range points {
+		c := geojson.Coordinate{geojson.Coord(point.X), geojson.Coord(point.Y)}
+		coordinates = append(coordinates, c)
+	}
+	linestring := geojson.NewLineString(coordinates)
+	return linestring
 }

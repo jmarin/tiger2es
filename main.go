@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/codegangsta/cli"
+	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -34,14 +35,16 @@ func main() {
 		host := c.String("host")
 		port := c.String("port")
 		if state != "" {
-			fmt.Println("Loading state: " + state + " into " + host + ":" + port)
+			log.Print("Loading state: " + state + " into " + host + ":" + port)
 			zipFiles := DownloadAddrFeat(state)
 			for _, zipFile := range zipFiles {
 				UnzipFile(zipFile)
+				str := strings.Split(zipFile, ".")
+				shp := str[0] + ".shp"
+				ReadShapefile(shp)
 			}
-			//readShapefile("tl_2014_11001_addrfeat.shp")
 		} else {
-			fmt.Println("Please provide a state to process")
+			log.Print("Please provide a state to process")
 		}
 	}
 
