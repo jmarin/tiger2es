@@ -2,9 +2,13 @@ package main
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"reflect"
+
+	"github.com/jonas-p/go-shp"
 )
 
 func UnzipFile(zipFile string) {
@@ -32,5 +36,32 @@ func UnzipFile(zipFile string) {
 			log.Fatal(err)
 		}
 
+	}
+}
+
+// Pass .shp file name
+func readShapefile(file string) {
+	shape, err := shp.Open(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer shape.Close()
+
+	//fields
+	fields := shape.Fields()
+
+	//loop through all features in the shapefile
+	for shape.Next() {
+		n, p := shape.Shape()
+
+		fmt.Println(reflect.TypeOf(p).Elem(), p.BBox())
+
+		//print attributes
+		for k, f := range fields {
+			val := shape.ReadAttribute(n, k)
+			fmt.Printf("\t%v: %v\n", f, val)
+		}
+
+		fmt.Println()
 	}
 }

@@ -8,7 +8,7 @@ import (
 
 const FTP_URL = "ftp2.census.gov"
 
-func DownloadAddrFeat(fips string) {
+func DownloadAddrFeat(fips string) []string {
 
 	ftpClient := ftp4go.NewFTP(0)
 
@@ -38,12 +38,18 @@ func DownloadAddrFeat(fips string) {
 		os.Exit(-1)
 	}
 
+	l := make([]string, len(zipList))
+	i := 0
+
 	for _, zipFile := range zipList {
 		if fips == zipFile[8:10] {
+			l[i] = zipFile
 			log.Print("Downloading ", zipFile)
 			ftpClient.DownloadFile(zipFile, zipFile, false)
-			UnzipFile(zipFile)
+			i += 1
 		}
 	}
 
+	s := l[0:i]
+	return s
 }

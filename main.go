@@ -35,7 +35,11 @@ func main() {
 		port := c.String("port")
 		if state != "" {
 			fmt.Println("Loading state: " + state + " into " + host + ":" + port)
-			DownloadAddrFeat(state)
+			zipFiles := DownloadAddrFeat(state)
+			for _, zipFile := range zipFiles {
+				UnzipFile(zipFile)
+			}
+			//readShapefile("tl_2014_11001_addrfeat.shp")
 		} else {
 			fmt.Println("Please provide a state to process")
 		}
