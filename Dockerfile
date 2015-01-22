@@ -11,12 +11,11 @@ RUN mkdir /usr/go
 ENV GOPATH /usr/go
 ENV PATH $PATH:$GOPATH/bin
 
-#RUN mkdir $GOPATH/src
-#RUN mkdir $GOPATH/bin
-#RUN mkdir $GOPATH/pkg
-
+# Install Go dependencies
 
 RUN go get github.com/codegangsta/cli
+RUN go get code.google.com/p/ftp4go
+
 RUN mkdir -p $GOPATH/src/github.com/jmarin/tiger2es
 ADD . $GOPATH/src/github.com/jmarin/tiger2es
 
