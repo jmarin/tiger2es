@@ -41,7 +41,6 @@ func main() {
 				UnzipFile(zipFile)
 				str := strings.Split(zipFile, ".")
 				shp := str[0] + ".shp"
-				//ReadShapefile(shp)
 				features := Features(shp)
 				for _, f := range features {
 					log.Print(ToGeoJson(f))
