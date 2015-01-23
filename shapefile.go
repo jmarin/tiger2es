@@ -1,4 +1,4 @@
-package shapefile
+package main
 
 import (
 	"github.com/jonas-p/go-shp"

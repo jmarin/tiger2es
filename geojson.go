@@ -1,4 +1,4 @@
-package geojson
+package main
 
 import (
 	"log"

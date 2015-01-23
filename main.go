@@ -2,12 +2,9 @@ package main
 
 import (
 	"github.com/codegangsta/cli"
-	"github.com/jmarin/tiger2es/es"
-	"github.com/jmarin/tiger2es/ftp"
-	"github.com/jmarin/tiger2es/geojson"
-	"github.com/jmarin/tiger2es/shapefile"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -28,19 +25,19 @@ func main() {
 			Value: "localhost",
 			Usage: "Elasticsearch host",
 		},
-		cli.StringFlag{
+		cli.IntFlag{
 			Name:  "port, p",
-			Value: "9200",
+			Value: 9200,
 			Usage: "Elasticsearch HTTP port",
 		},
 	}
 	app.Action = func(c *cli.Context) {
 		state := c.String("state")
 		host := c.String("host")
-		port := c.String("port")
+		port := c.Int("port")
 		settings := ElasticSettings{Host: host, Port: port}
 		if state != "" {
-			log.Print("Loading state: " + state + " into " + host + ":" + port)
+			log.Print("Loading state: " + state + " into " + host + ":" + strconv.Itoa(port))
 			zipFiles := DownloadAddrFeat(state)
 			for _, zipFile := range zipFiles {
 				UnzipFile(zipFile)
@@ -48,7 +45,8 @@ func main() {
 				shp := str[0] + ".shp"
 				features := Features(shp)
 				for _, f := range features {
-					log.Print(ToGeoJson(f))
+					//log.Print(ToGeoJson(f))
+					load(ToGeoJson(f), settings)
 				}
 			}
 		} else {
