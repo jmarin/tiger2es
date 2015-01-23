@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
-	//"reflect"
+	"strings"
 )
 
 func UnzipFile(zipFile string) {
@@ -44,19 +44,31 @@ func ReadShapefile(filename string) {
 }
 
 func getLines(filename string) {
-	values := make(map[string]interface{})
 	file, err := shp.Open(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
+	fields := file.Fields()
+
+	props := make(map[string]interface{})
+
 	for file.Next() {
-		_, shape := file.Shape()
+		n, shape := file.Shape()
 		line := shape.(*shp.PolyLine)
 		geometry := getLineString(line)
-		feature := geojson.NewFeature(geometry, values, nil)
-		log.Print(geojson.Marshal(feature))
+		for k, f := range fields {
+			name := strings.Trim(f.String(), "\u0000")
+			value := file.ReadAttribute(n, k)
+			props[name] = value
+		}
+		feature := geojson.NewFeature(geometry, props, nil)
+		json, err := geojson.Marshal(feature)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Print(json)
 
 	}
 }
