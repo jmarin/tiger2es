@@ -2,6 +2,10 @@ package main
 
 import (
 	"github.com/codegangsta/cli"
+	"github.com/jmarin/tiger2es/es"
+	"github.com/jmarin/tiger2es/ftp"
+	"github.com/jmarin/tiger2es/geojson"
+	"github.com/jmarin/tiger2es/shapefile"
 	"log"
 	"os"
 	"strings"
@@ -34,6 +38,7 @@ func main() {
 		state := c.String("state")
 		host := c.String("host")
 		port := c.String("port")
+		settings := ElasticSettings{Host: host, Port: port}
 		if state != "" {
 			log.Print("Loading state: " + state + " into " + host + ":" + port)
 			zipFiles := DownloadAddrFeat(state)

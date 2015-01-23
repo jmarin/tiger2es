@@ -1,4 +1,4 @@
-package main
+package ftp
 
 import (
 	"code.google.com/p/ftp4go"
