@@ -45,7 +45,6 @@ func main() {
 				shp := str[0] + ".shp"
 				features := Features(shp)
 				for _, f := range features {
-					//log.Print(ToGeoJson(f))
 					load(ToGeoJson(f), settings)
 				}
 			}

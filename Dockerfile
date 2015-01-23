@@ -20,6 +20,8 @@ ENV PATH $PATH:$GOPATH/bin
 RUN go get github.com/codegangsta/cli
 RUN go get code.google.com/p/ftp4go
 RUN go get github.com/jonas-p/go-shp
+RUN go get github.com/kpawlik/geojson
+RUN go get github.com/mattbaird/elastigo
 
 RUN mkdir -p $GOPATH/src/github.com/jmarin/tiger2es
 ADD . $GOPATH/src/github.com/jmarin/tiger2es
