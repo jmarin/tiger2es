@@ -23,7 +23,7 @@ func DeleteIndex(index string, settings ElasticSettings) {
 }
 
 func load(json string, settings ElasticSettings) {
-	log.Print(json)
+	//log.Print(json)
 	DeleteIndex("addrfeat", settings)
 	c := elastigo.NewConn()
 	c.Domain = settings.Host
