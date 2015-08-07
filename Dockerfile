@@ -2,14 +2,10 @@
 # To build, run docker build --rm --tag jmarin/tiger2es .
 # A container with a shell can be started by running docker run -t -i jmarin/tiger2es
 
-FROM centos:latest
+FROM alpine:latest
 MAINTAINER Juan Marin Otero <juan.marin.otero@gmail.com>
 
-RUN yum -y update; yum clean all
-
-# Install dependencies
-
-RUN yum -y install git mercurial golang; yum clean all
+RUN apk update && apk add git mercurial go && rm -rf /var/cache/apk/* 
 
 RUN mkdir /usr/go
 ENV GOPATH /usr/go
@@ -28,4 +24,4 @@ ADD . $GOPATH/src/github.com/jmarin/tiger2es
 WORKDIR $GOPATH/src/github.com/jmarin/tiger2es
 RUN go install
 
-CMD ["/bin/bash"]
+CMD ["/usr/go/bin/tiger2es"]
