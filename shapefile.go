@@ -14,6 +14,8 @@ func Features(filename string) (features []*geojson.Feature) {
 	}
 	defer file.Close()
 
+	state := filename[8:10]
+
 	fields := file.Fields()
 	props := make(map[string]interface{})
 
@@ -25,6 +27,7 @@ func Features(filename string) (features []*geojson.Feature) {
 			name := strings.Trim(f.String(), "\u0000")
 			value := file.ReadAttribute(n, k)
 			props[name] = value
+			props["STATE"] = stateAbbr(state)
 		}
 		feature := geojson.NewFeature(geometry, props, nil)
 		features = append(features, feature)

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -31,14 +32,16 @@ func main() {
 			Usage: "Elasticsearch HTTP port",
 		},
 	}
+
 	app.Action = func(c *cli.Context) {
+		start := time.Now()
 		state := c.String("state")
 		host := c.String("host")
 		port := c.Int("port")
 		settings := ElasticSettings{Host: host, Port: port}
 		if state != "" {
-			log.Print("Loading state: " + state + " into " + host + ":" + strconv.Itoa(port))
 			zipFiles := DownloadAddrFeat(state)
+			log.Print("Loading state: " + state + " into " + host + ":" + strconv.Itoa(port))
 			for _, zipFile := range zipFiles {
 				UnzipFile(zipFile)
 				str := strings.Split(zipFile, ".")
@@ -51,6 +54,10 @@ func main() {
 		} else {
 			log.Print("Please provide a state to process")
 		}
+		end := time.Now()
+		execTime := end.Sub(start)
+		log.Print(execTime)
+
 	}
 
 	app.Run(os.Args)
