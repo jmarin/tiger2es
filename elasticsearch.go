@@ -28,7 +28,7 @@ func load(json string, settings ElasticSettings) {
 	c := elastigo.NewConn()
 	c.Domain = settings.Host
 
-	_, err := c.Index("addrfeat", "tiger", "", nil, json)
+	_, err := c.Index("census", "addrfeat", "", nil, json)
 	if err != nil {
 		log.Panic(err)
 	}
